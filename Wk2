@@ -1,44 +1,41 @@
 //Your turn!  Create a new Apex class called WeekTwoHomework.  Create the following methods. You can use any criteria you like, based on the sample data in your developer org
 public class WeekTwoHomework {
 //A method that includes a query for a List of contacts and returns the Account Name and Industry as well.
-    public static void childtoParent(){   
-       List < Contact > contactList = [SELECT ID, FirstName, LastName, Account.Name,Account.Industry FROM Contact];
+    public static void childtoParent() {   
+       List <Contact> contactList = [SELECT ID, FirstName, LastName, Account.Name,Account.Industry FROM Contact];
     //Use a loop to print the name of each Contact’s Account Name with System.debug.
-    //I know this isn't correct,but I could figure out how to do the loop correctly.
-        //for (List c: Account.Name){
-        //System.debug(c: '+c);
-        System.debug('Account Name: '+contactList[0].Account.Name);
-    }   
+ 		for (Contact c: contactList)
+            System.debug('Contact: '+c.Account.Name);
+        }                        
+                     
     //A method that includes a query for a list of Accounts AND 
     //includes all their closed-won opportunities in a subquery.
-      public static void parenttoChild () { 
+      public static void parenttoChild() { 
 		Account[] acctsWithClosedOpps = [SELECT Name, (SELECT Name FROM Opportunities WHERE StageName = 'Closed Won')
-                                        FROM Account];
-        }
+                                        FROM Account];   
 // Use a loop to print out the name of each Account’s opportunity with System.debug.
-        //System.debug('Our Closed Opps are: '+acctsWithClosedOpps);
-
+          For (Account a: acctswithClosedOpps){
+              System.debug('Account: '+a.get('Name'));
+          For (Opportunity o: a.Opportunities){
+             System.debug ('Our Closed Opps are: '+o.Name);
+          } 
+     }
+}
+          
 // A method for Opportunity records that returns results in a map format.
-// An aggregate results query that returns an integer equal to the total number of open opportunities in your org.
-    	public static void oppCollection () {
-      
-        List < Opportunity > oppList = [SELECT ID, Name FROM Opportunity WHERE StageName = 'Open'];
-
-		Map < ID, Opportunity> oppMap = new Map < ID, Opportunity>(oppList);       
+    	public static void oppCollection() {
+		Map < ID, Opportunity> oppMap = new Map < ID, Opportunity>([SELECT ID, Name FROM Opportunity]);       
 	}
-    
+  
     public static void totalOpps () {
 
-		//1)
-		//Let's create a query to count how many opportunities we have that are over $100,000 dollars
-		//Since we're just getting a count, we can put the result directly intp an integer variable
-		Integer oppsCount = [SELECT COUNT() FROM Opportunity WHERE StageName = 'Open'];
-		System.debug('We have ' + oppsCount+ ' Open Opportunities');
-    }
-}
-
+// An aggregate results query that returns an integer equal to the total number of open opportunities in your org.
+		AggregateResult[] oppsCount = [SELECT COUNT(Id) FROM Opportunity WHERE StageName = 'Open'
+                                      GROUP BY StageName];
+		System.debug('We have ' + oppsCount+ ' Open Opportunities.');   
+        
   
-
-
+		}       
+    }
 
 
